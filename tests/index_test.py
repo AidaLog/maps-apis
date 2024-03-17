@@ -26,3 +26,8 @@ def test_get_euclidean_distance(index, origin, destination):
 
 def test_get_great_circle_distance(index, origin, destination):
     assert index.get_great_circle_distance(origin, destination) ==  6969.148899790171
+
+
+def test_get_distance(index, origin, destination):
+    assert index.get_distance(origin, destination, 'euclidean') == 0.06274428673887529
+    assert index.get_distance(origin, destination, 'great_circle') == 6969.148899790171
