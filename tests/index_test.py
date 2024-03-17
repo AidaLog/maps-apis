@@ -16,8 +16,7 @@ def destination():
     return (-6.867255,39.310245)
 
 
-def test_get_bearing(index):
-    origin = (37.7749, -122.4194)
-    destination = (37.78369666906259, -122.41703415761295)
+def test_get_bearing(index, origin, destination):
+    assert index.get_bearing(origin, destination) == 156.90522903928954
 
-    assert index.get_bearing(origin, destination) == 11.999999999975099
+
