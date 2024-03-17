@@ -5,7 +5,7 @@ class Index:
     def __init__(self):
         pass
 
-    def get_bearing(self, origin: Tuple, destination: Tuple):
+    def get_bearing(self, origin: Tuple, destination: Tuple) -> float:
         """returns the bearing between two lat-long points as a single value in degrees
 
         Args:
@@ -21,8 +21,9 @@ class Index:
             return -1
 
 
+
     """Distance Calculation"""
-    def get_euclidean_distance(self, origin: Tuple, destination: Tuple):
+    def get_euclidean_distance(self, origin: Tuple, destination: Tuple) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
         Args:
@@ -38,7 +39,7 @@ class Index:
             return -1
 
 
-    def get_great_circle_distance(self, origin: Tuple, destination: Tuple):
+    def get_great_circle_distance(self, origin: Tuple, destination: Tuple) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
         Args:
@@ -53,7 +54,7 @@ class Index:
         except:
             return -1
 
-    def get_distance(self, origin: Tuple, destination: Tuple, kind:str):
+    def get_distance(self, origin: Tuple, destination: Tuple, kind:str) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
         Args:
@@ -71,3 +72,21 @@ class Index:
                 return self.get_great_circle_distance(origin, destination)
         except:
             return -1
+
+
+
+
+    """ Geocoding """
+    def geocode(self, place_name:str) -> tuple:
+        """returns the latitude and longitude of a place name
+
+        Args:
+            place_name (str): the name of the place. example: 'San Francisco, California'
+
+        Returns:
+            location (tuple): the latitude and longitude of the place. example: (37.7749, -122.4194)
+        """
+        try:
+            return ox.geocoder.geocode(place_name)
+        except:
+            return ( )
