@@ -90,3 +90,22 @@ class Index:
             return ox.geocoder.geocode(place_name)
         except:
             return ( )
+
+
+
+
+    """ Graphs """
+    def get_graph(self, place_name:str, network_type:str) -> object:
+        """returns the street network for a place
+
+        Args:
+            place_name (str): the name of the place. example: 'Ubungo Maji, Dar Es Salaam, Tanzania'
+            network_type (str): the type of street network to retrieve. options: 'drive', 'walk', 'bike', 'all'
+
+        Returns:
+            G (object): the street network object
+        """
+        try:
+            return ox.graph_from_address(place_name, network_type=network_type)
+        except:
+            return None

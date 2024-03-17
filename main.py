@@ -19,4 +19,8 @@ single_target = (-6.7870493, 39.2044721)  # Ubungo Maji, Dar Es Salaam, Tanzania
 # print("Great Circle Distance: ",distance)
 
 # coordinates = Index().geocode("Ubungo Maji, Dar Es Salaam, Tanzania")
-# print("Coordinates: ",coordinates)  
+# print("Coordinates: ",coordinates)
+
+
+# graph = Index().get_graph("Ubungo Maji, Dar Es Salaam, Tanzania", "drive")
+# print("Graph: ",graph)
