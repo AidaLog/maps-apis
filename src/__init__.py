@@ -19,3 +19,36 @@ class Index:
             return ox.bearing.calculate_bearing(origin[0], origin[1], destination[0], destination[1])
         except:
             return -1
+
+
+    """Distance Calculation"""
+    def get_euclidean_distance(self, origin: Tuple, destination: Tuple):
+        """returns the distance between two lat-long points as a single value in meters
+
+        Args:
+            origin (tuple): origin lat-long point. example: (37.7749, -122.4194)
+            destination (tuple): destination lat-long point example: (37.7749, -122.4194)
+
+        Returns:
+            distance (float): the distance in meters
+        """
+        try:
+            return ox.distance.euclidean(origin[0], origin[1], destination[0], destination[1])
+        except:
+            return -1
+
+
+    def get_great_circle_distance(self, origin: Tuple, destination: Tuple):
+        """returns the distance between two lat-long points as a single value in meters
+
+        Args:
+            origin (tuple): origin lat-long point. example: (37.7749, -122.4194)
+            destination (tuple): destination lat-long point example: (37.7749, -122.4194)
+
+        Returns:
+            distance (float): the distance in meters
+        """
+        try:
+            return ox.distance.great_circle(origin[0], origin[1], destination[0], destination[1], earth_radius=6371009)
+        except:
+            return -1
