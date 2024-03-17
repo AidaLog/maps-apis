@@ -56,6 +56,6 @@ def process_region_boundary(region_name, response):
         for coord in coordinates:
             writer.writerow(coord)
 
-def geocoord_to_address(lat, lng):
+def geocoordinate_to_address(lat, lng):
     location = ox.distance.nearest_edges(lat, lng)
     return location

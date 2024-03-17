@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "open_street"
+        "."
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
