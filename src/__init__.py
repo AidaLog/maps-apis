@@ -1,11 +1,10 @@
 import osmnx as ox
-from typing import List, Tuple
 
 class Index:
     def __init__(self):
         pass
 
-    def get_bearing(self, origin: Tuple, destination: Tuple) -> float:
+    def get_bearing(self, origin: tuple, destination: tuple) -> float:
         """returns the bearing between two lat-long points as a single value in degrees
 
         Args:
@@ -23,7 +22,7 @@ class Index:
 
 
     """Distance Calculation"""
-    def get_euclidean_distance(self, origin: Tuple, destination: Tuple) -> float:
+    def get_euclidean_distance(self, origin: tuple, destination: tuple) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
         Args:
@@ -39,7 +38,7 @@ class Index:
             return -1
 
 
-    def get_great_circle_distance(self, origin: Tuple, destination: Tuple) -> float:
+    def get_great_circle_distance(self, origin: tuple, destination: tuple) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
         Args:
@@ -54,7 +53,7 @@ class Index:
         except:
             return -1
 
-    def get_distance(self, origin: Tuple, destination: Tuple, kind:str) -> float:
+    def get_distance(self, origin: tuple, destination: tuple, kind:str) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
         Args:
