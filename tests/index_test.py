@@ -38,3 +38,7 @@ def test_get_distance(index, origin, destination):
 
 def test_geocode(index, single_target):
     assert index.geocode("Kigamboni Ferry Terminal") == single_target
+
+
+def test_get_road_distance(index, origin, destination):
+    assert index.get_road_distance(origin, destination, mode='drive', weight='time') == 12348.612000000001
