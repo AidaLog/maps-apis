@@ -74,7 +74,7 @@ class Index:
             return -1
 
 
-    def get_center(self, source:tuple, destination:tuple):
+    def get_center(self, source:tuple, destination:tuple) -> tuple:
         """returns the center of two lat-long points
 
         Args:
