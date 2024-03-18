@@ -74,18 +74,18 @@ class Index:
             return -1
 
 
-    def get_center(self, source:tuple, destination:tuple) -> tuple:
+    def get_center(self, origin:tuple, destination:tuple) -> tuple:
         """returns the center of two lat-long points
 
         Args:
-            source (tuple): source lat-long point. example: (37.7749, -122.4194)
+            origin (tuple): origin lat-long point. example: (37.7749, -122.4194)
             destination (tuple): destination lat-long point example: (37.7749, -122.4194)
 
         Returns:
             center (tuple): the center lat-long point
         """
-        latitude_center = (source[0] + destination[0]) / 2
-        longitude_center = (source[1] + destination[1]) / 2
+        latitude_center = (origin[0] + destination[0]) / 2
+        longitude_center = (origin[1] + destination[1]) / 2
         return (latitude_center, longitude_center)
 
 
@@ -139,30 +139,60 @@ class Index:
         """
         pass
 
-
-    def get_road_distance(self, p1_address:str, p2_address:str, mode:str) -> float:
-        """returns the distance between two addresses by following roads
+    def get_shortest_route(self, origin: tuple, destination:tuple, mode:str, weight:str) -> any:
+        """returns the shortest route between two lat-long points
 
         Args:
-            p1_address (str): the first address. example: 'Ubungo Maji, Dar Es Salaam, Tanzania'
-            p2_address (str): the second address. example: 'Mbezi, Dar Es Salaam, Tanzania'
-            mode (str): the mode of transportation. options: 'drive', 'walk', 'bike'
+            origin (tuple): origin lat-long point. example: (37.7749, -122.4194)
+            destination (tuple): destination lat-long point example: (37.7749, -122.4194)
+            mode (str): the type of street network to retrieve. options: 'drive', 'walk', 'bike', 'all'
+            weight (str): 'time', 'length', 'cost', 'speed', 'elevation'
+
+        Returns:
+            route (list): the shortest route as a list of lat-long points
+        """
+        try:
+            G = ox.graph_from_point(
+                self.get_center(
+                    origin=origin,
+                    destination=destination),
+                dist=self.get_distance(
+                    origin=origin,
+                    destination=destination,
+                    kind='great_circle'),
+                network_type=mode)
+
+            node_point1=ox.nearest_nodes(G,origin[1],origin[0])
+            node_point2=ox.nearest_nodes(G,destination[1],destination[0])
+            return G, ox.shortest_path(G, node_point1, node_point2, weight=weight)
+        except:
+            return None
+
+    def get_road_distance(
+        self,
+        origin: tuple,
+        destination:tuple,
+        mode:str,
+        weight:str) -> float:
+
+        """returns the distance between two lat-long points by following roads
+
+        Args:
+            origin (tuple): origin lat-long point. example: (37.7749, -122.4194)
+            destination (tuple): destination lat-long point example: (37.7749, -122.4194)
+            mode (str): the type of street network to retrieve. options: 'drive', 'walk', 'bike', 'all'
+            weight (str): 'time', 'length', 'cost', 'speed', 'elevation'
 
         Returns:
             distance (float): the distance in meters
         """
-        # try:
-        G1 = self.get_graph(p1_address, mode)
-        G2 = self.get_graph(p2_address, mode)
+        G, shortest_path = self.get_shortest_route(origin, destination, mode, weight)
+        if shortest_path is None:
+            return -1
 
-        print("G1: ", G1, "Type: ", type(G1))
-        print("G2: ", G2, "Type: ", type(G2))
+        total_distance = 0
+        for i in range(len(shortest_path)-1):
+            u, v = shortest_path[i], shortest_path[i+1]
+            total_distance += G[u][v][0]['length']
 
-        point1 = (G1.nodes[list(G1.nodes())[0]]['y'], G1.nodes[list(G1.nodes())[0]]['x'])
-        point2 = (G2.nodes[list(G2.nodes())[0]]['y'], G2.nodes[list(G2.nodes())[0]]['x'])
-        print("Point1: ", point1)
-        print("Point2: ", point2)
-
-        return self.get_distance(point1, point2, 'great_circle')
-        # except:
-        #     return -1
+        return total_distance

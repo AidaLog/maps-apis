@@ -28,5 +28,8 @@ point_target = (-6.82186645, 39.301757704855774) # Ferry Terminal, Dar Es Salaam
 # print("Graph: ",graph)
 
 
-distance = Index().get_road_distance("Ubungo Maji, Dar Es Salaam, Tanzania", "Ferry Terminal, Dar Es Salaam, Tanzania", 'drive')
+# distance = Index().get_road_distance("Ubungo Maji, Dar Es Salaam, Tanzania", "Ferry Terminal, Dar Es Salaam, Tanzania", 'drive')
+# print("Road Distance: ",distance)
+
+distance = Index().get_road_distance(origin, destination, mode='drive', weight='time')
 print("Road Distance: ",distance)
