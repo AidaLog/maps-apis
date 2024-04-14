@@ -37,8 +37,8 @@ point_target = (-6.82186645, 39.301757704855774) # Ferry Terminal, Dar Es Salaam
 
 # distance matrix
 
-origins = [origin, single_target]
-destinations = [destination, point_target]
+# origins = [origin, single_target]
+# destinations = [destination, point_target]
 
 matrix = Index().get_distance_matrix(origins, destinations, mode='drive', weight='time')
 print("Distance Matrix: ",matrix) 
