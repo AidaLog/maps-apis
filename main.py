@@ -41,4 +41,4 @@ origins = [origin, single_target]
 destinations = [destination, point_target]
 
 matrix = Index().get_distance_matrix(origins, destinations, mode='drive', weight='time')
-print("Distance Matrix: ",matrix)
+print("Distance Matrix: ",matrix) 
