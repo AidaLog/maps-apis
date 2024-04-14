@@ -1,4 +1,9 @@
 import osmnx as ox
+from warnings import filterwarnings
+
+
+filterwarnings("ignore")
+
 
 class Index:
     def __init__(self):
@@ -165,7 +170,7 @@ class Index:
             node_point2=ox.nearest_nodes(G,destination[1],destination[0])
             return G, ox.shortest_path(G, node_point1, node_point2, weight=weight)
         except:
-            return None
+            return None, None
 
     def get_road_distance(
         self,

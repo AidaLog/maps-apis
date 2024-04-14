@@ -41,4 +41,6 @@ def test_geocode(index, single_target):
 
 
 def test_get_road_distance(index, origin, destination):
-    assert index.get_road_distance(origin, destination, mode='drive', weight='time') == 12348.612000000001
+    _distance = index.get_road_distance(origin, destination, mode='drive', weight='time')
+    print("Road Distance: ",_distance)
+    assert _distance == 12348.612000000001
