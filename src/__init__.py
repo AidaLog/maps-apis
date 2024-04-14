@@ -27,8 +27,6 @@ class Index:
             return -1
 
 
-
-    """Distance Calculation"""
     def get_euclidean_distance(self, origin: tuple, destination: tuple) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
@@ -61,6 +59,7 @@ class Index:
         except Exception as e:
             logging.error(f"Error occurred while calculating GCD: {e}")
             return -1
+
 
     def get_distance(self, origin: tuple, destination: tuple, kind:str) -> float:
         """returns the distance between two lat-long points as a single value in meters
@@ -98,7 +97,6 @@ class Index:
         return (latitude_center, longitude_center)
 
 
-    """ Geocoding """
     def geocode(self, place_name:str) -> tuple:
         """returns the latitude and longitude of a place name
 
@@ -115,9 +113,6 @@ class Index:
             return ()
 
 
-
-
-    """ Graphs """
     def get_graph(self, place_name:str, network_type:str, kind:str = "address") -> object:
         """returns the street network for a place
 
@@ -136,6 +131,7 @@ class Index:
         except Exception as e:
             logging.error(f"Error while retrieving Graph for {place_name}: {e}")
             return None
+
 
     def get_graph_from_points(self, points: list[tuple], network_type:str, mode:str) -> object:
         """returns the street network for a place
@@ -199,6 +195,7 @@ class Index:
         except Exception as e:
             logging.error(f"Error occurred while getting shortest distance from {origin}, to {destination}: {e}")
             return None, None
+
 
     def get_road_distance(
         self,
