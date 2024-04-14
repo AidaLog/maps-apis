@@ -148,7 +148,27 @@ class Index:
         Returns:
             G (object): the street network object
         """
-        pass
+        try:
+            if network_type == "points":
+                # Get the center of the points
+                center_point = (
+                    sum(point[0] for point in points) / len(points),
+                    sum(point[1] for point in points) / len(points)
+                )
+                # Calculate the radius from the center to the farthest point
+                radius = max(ox.utils.euclidean_dist_vec(center_point[0], center_point[1], point[0], point[1]) for point in points)
+                # Retrieve the graph from point with the specified radius and network type
+                return ox.graph_from_point(center_point, dist=radius, network_type=mode)
+            elif network_type == "bbox":
+                # Calculate the bounding box from the points
+                north, south = max(point[0] for point in points), min(point[0] for point in points)
+                east, west = max(point[1] for point in points), min(point[1] for point in points)
+                # Retrieve the graph from the bounding box and network type
+                return ox.graph_from_bbox(north, south, east, west, network_type=mode)
+        except Exception as e:
+            logging.error(f"Error occurred while getting graph from points: {e}")
+            return None
+
 
     def get_shortest_route(self, origin: tuple, destination:tuple, mode:str, weight:str) -> any:
         """returns the shortest route between two lat-long points
