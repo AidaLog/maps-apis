@@ -1,7 +1,7 @@
 import osmnx as ox
 from warnings import filterwarnings
 import logging
-
+import concurrent.futures
 
 filterwarnings("ignore")
 
@@ -225,3 +225,43 @@ class Index:
             total_distance += G[u][v][0]['length']
 
         return total_distance
+
+
+    def get_distance_matrix(self, origins: list[tuple], destinations: list[tuple], mode: str, weight: str) -> list[list[float]]:
+        """Returns a distance matrix between sets of origins and destinations using threading
+
+        Args:
+            origins (list): List of origin lat-long points. Example: [(37.7749, -122.4194), (37.7749, -122.4194)]
+            destinations (list): List of destination lat-long points. Example: [(37.7749, -122.4194), (37.7749, -122.4194)]
+            mode (str): The type of street network to retrieve. Options: 'drive', 'walk', 'bike', 'all'
+            weight (str): The type of weight to use for the distances. Options: 'time', 'length', 'cost', 'speed', 'elevation'
+
+        Returns:
+            distance_matrix (list): A matrix of pairwise distances between origins and destinations
+        """
+        try:
+            # Initialize the distance matrix
+            distance_matrix = []
+
+            # Function to calculate distance between a single origin and all destinations
+            def calculate_distances(origin):
+                return [self.get_road_distance(origin, destination, mode, weight) for destination in destinations]
+
+            # Use ThreadPoolExecutor to parallelize the distance calculations
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                # Submit tasks for each origin
+                future_to_origin = {executor.submit(calculate_distances, origin): origin for origin in origins}
+                # Retrieve results as they become available
+                for future in concurrent.futures.as_completed(future_to_origin):
+                    origin = future_to_origin[future]
+                    try:
+                        distances = future.result()
+                        distance_matrix.append(distances)
+                    except Exception as e:
+                        logging.error(f"Error occurred while calculating distances for origin {origin}: {e}")
+
+            return distance_matrix
+        except Exception as e:
+            logging.error(f"Error occurred while getting distance matrix: {e}")
+            return None
+    
