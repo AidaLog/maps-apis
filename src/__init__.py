@@ -1,5 +1,6 @@
 import osmnx as ox
 from warnings import filterwarnings
+import logging
 
 
 filterwarnings("ignore")
@@ -21,7 +22,8 @@ class Index:
         """
         try:
             return ox.bearing.calculate_bearing(origin[0], origin[1], destination[0], destination[1])
-        except:
+        except Exception as e:
+            logging.error(f"Error occurred while calculating bearing: {e}")
             return -1
 
 
@@ -39,7 +41,8 @@ class Index:
         """
         try:
             return ox.distance.euclidean(origin[0], origin[1], destination[0], destination[1])
-        except:
+        except Exception as e:
+            logging.error(f"Error occurred while calculating euclidean distance: {e}")
             return -1
 
 
@@ -55,7 +58,8 @@ class Index:
         """
         try:
             return ox.distance.great_circle(origin[0], origin[1], destination[0], destination[1], earth_radius=6371009)
-        except:
+        except Exception as e:
+            logging.error(f"Error occurred while calculating GCD: {e}")
             return -1
 
     def get_distance(self, origin: tuple, destination: tuple, kind:str) -> float:
@@ -74,7 +78,8 @@ class Index:
                 return self.get_euclidean_distance(origin, destination)
             elif kind == 'great_circle':
                 return self.get_great_circle_distance(origin, destination)
-        except:
+        except Exception as e:
+            logging.error(f"Error occurred while getting distance: {e}")
             return -1
 
 
@@ -105,8 +110,9 @@ class Index:
         """
         try:
             return ox.geocoder.geocode(place_name)
-        except:
-            return ( )
+        except Exception as e:
+            logging.error(f"Failed to geocode {place_name} : {e}")
+            return ()
 
 
 
@@ -127,7 +133,8 @@ class Index:
                 return ox.graph_from_address(place_name, network_type=network_type)
             elif kind == "place":
                 return ox.graph_from_place(place_name, network_type=network_type)
-        except:
+        except Exception as e:
+            logging.error(f"Error while retrieving Graph for {place_name}: {e}")
             return None
 
     def get_graph_from_points(self, points: list[tuple], network_type:str, mode:str) -> object:
@@ -169,7 +176,8 @@ class Index:
             node_point1=ox.nearest_nodes(G,origin[1],origin[0])
             node_point2=ox.nearest_nodes(G,destination[1],destination[0])
             return G, ox.shortest_path(G, node_point1, node_point2, weight=weight)
-        except:
+        except Exception as e:
+            logging.error(f"Error occurred while getting shortest distance from {origin}, to {destination}: {e}")
             return None, None
 
     def get_road_distance(
