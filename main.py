@@ -31,5 +31,14 @@ point_target = (-6.82186645, 39.301757704855774) # Ferry Terminal, Dar Es Salaam
 # distance = Index().get_road_distance("Ubungo Maji, Dar Es Salaam, Tanzania", "Ferry Terminal, Dar Es Salaam, Tanzania", 'drive')
 # print("Road Distance: ",distance)
 
-distance = Index().get_road_distance(origin, destination, mode='drive', weight='time')
-print("Road Distance: ",distance)
+# distance = Index().get_road_distance(origin, destination, mode='drive', weight='time')
+# print("Road Distance: ",distance)
+
+
+# distance matrix
+
+# origins = [origin, single_target]
+# destinations = [destination, point_target]
+
+matrix = Index().get_distance_matrix(origins, destinations, mode='drive', weight='time')
+print("Distance Matrix: ",matrix) 

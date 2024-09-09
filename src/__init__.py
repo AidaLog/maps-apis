@@ -1,7 +1,8 @@
 import osmnx as ox
 from warnings import filterwarnings
 import logging
-
+import concurrent.futures
+from functools import lru_cache
 
 filterwarnings("ignore")
 
@@ -10,6 +11,7 @@ class Index:
     def __init__(self):
         pass
 
+    @lru_cache(maxsize=None)
     def get_bearing(self, origin: tuple, destination: tuple) -> float:
         """returns the bearing between two lat-long points as a single value in degrees
 
@@ -27,6 +29,7 @@ class Index:
             return -1
 
 
+    @lru_cache(maxsize=None)
     def get_euclidean_distance(self, origin: tuple, destination: tuple) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
@@ -44,6 +47,8 @@ class Index:
             return -1
 
 
+
+    @lru_cache(maxsize=None)
     def get_great_circle_distance(self, origin: tuple, destination: tuple) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
@@ -61,6 +66,7 @@ class Index:
             return -1
 
 
+    @lru_cache(maxsize=None)
     def get_distance(self, origin: tuple, destination: tuple, kind:str) -> float:
         """returns the distance between two lat-long points as a single value in meters
 
@@ -82,6 +88,7 @@ class Index:
             return -1
 
 
+    @lru_cache(maxsize=None)
     def get_center(self, origin:tuple, destination:tuple) -> tuple:
         """returns the center of two lat-long points
 
@@ -97,6 +104,7 @@ class Index:
         return (latitude_center, longitude_center)
 
 
+    @lru_cache(maxsize=None)
     def geocode(self, place_name:str) -> tuple:
         """returns the latitude and longitude of a place name
 
@@ -113,6 +121,7 @@ class Index:
             return ()
 
 
+    @lru_cache(maxsize=None)
     def get_graph(self, place_name:str, network_type:str, kind:str = "address") -> object:
         """returns the street network for a place
 
@@ -133,6 +142,7 @@ class Index:
             return None
 
 
+    @lru_cache(maxsize=None)
     def get_graph_from_points(self, points: list[tuple], network_type:str, mode:str) -> object:
         """returns the street network for a place
 
@@ -166,6 +176,27 @@ class Index:
             return None
 
 
+    @lru_cache(maxsize=None)
+    def get_graph_from_bbox(self, north:float, south:float, east:float, west:float, network_type:str="drive") -> object:
+        """returns the street network for a place
+
+        Args:
+            north (float): the northernmost latitude
+            south (float): the southernmost latitude
+            east (float): the easternmost longitude
+            west (float): the westernmost longitude
+            network_type (str): the type of street network to retrieve. options: 'drive', 'walk', 'bike', 'all'
+
+        Returns:
+            G (object): the street network object
+        """
+        try:
+            return ox.graph_from_bbox(north, south, east, west, network_type=network_type)
+        except Exception as e:
+            logging.error(f"Error occurred while getting graph from bbox: {e}")
+            return None
+
+    @lru_cache(maxsize=None)
     def get_shortest_route(self, origin: tuple, destination:tuple, mode:str, weight:str) -> any:
         """returns the shortest route between two lat-long points
 
@@ -225,3 +256,4 @@ class Index:
             total_distance += G[u][v][0]['length']
 
         return total_distance
+
