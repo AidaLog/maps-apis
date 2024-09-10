@@ -337,34 +337,47 @@ class Index:
     @staticmethod
     def visualize_network(graph,  file_name: str="graph_visualization", output_dir: str="samples"):
         """
-        Visualize the network graph using networkx and matplotlib.
+        Visualize the network graph using networkx and matplotlib, save it to a file, and return the file path.
 
         Parameters:
         - graph: The network graph to be visualized (a networkx.Graph or similar object).
+        - file_name: The name of the file to save the visualization (with extension).
+        - output_dir: The directory where the file will be saved.
+
+        Returns:
+        - file_path: The path to the saved visualization file.
         """
-        if graph is None:
-            raise ValueError("The graph object is None. Please ensure it was loaded successfully.")
+        # Check if the graph is valid
+        if graph is None or len(graph.nodes) == 0:
+            raise ValueError("The graph object is None or empty. Please ensure it was loaded successfully.")
         
+        # Convert graph to networkx if it's not already
         if isinstance(graph, nx.MultiGraph) or isinstance(graph, nx.Graph):
             G = graph
         else:
+            # Convert from osmnx graph if necessary
             G = ox.utils_graph.get_undirected(graph)
         
+        # Ensure the output directory exists
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         
+        # Define the file path
         file_path = os.path.join(output_dir, file_name)
         
+        # Draw the network
         plt.figure(figsize=(12, 12))
-        pos = nx.spring_layout(G, k=0.15, iterations=20)
-        nx.draw(G, pos, with_labels=True, node_size=10, node_color='blue', edge_color='gray', alpha=0.7)
+        pos = nx.spring_layout(G, k=0.15, iterations=20)  # Adjust layout parameters as needed
+        nx.draw(G, pos, with_labels=True, node_size=50, node_color='blue', edge_color='black', alpha=0.7)
         plt.title('Network Visualization')
         
-        plt.savefig(file_path)
-        plt.close()
+        # Save the plot to a file
+        plt.savefig(file_path, format='png')
+        plt.close()  # Close the plot to free memory
         
         print(f"Graph visualization saved to {file_path}")
         return file_path
+
 
 
     @staticmethod
@@ -402,3 +415,25 @@ class Index:
         distance, duration = asyncio.run(fetch_route())
 
         return distance, duration
+    
+    
+    @staticmethod
+    def get_subgraph_from_bbox(graph, north, south, east, west):
+        """
+        Extract a subgraph from the original graph based on a geographical bounding box.
+
+        Parameters:
+        - graph: The original network graph (a networkx.Graph or similar object).
+        - north, south, east, west: Bounding box coordinates defining the area of interest.
+
+        Returns:
+        - subgraph: The extracted subgraph within the specified bounding box.
+        """
+        nodes_within_bbox = [
+            node for node, data in graph.nodes(data=True)
+            if (south <= data['y'] <= north) and (west <= data['x'] <= east)
+        ]
+        
+        subgraph = graph.subgraph(nodes_within_bbox).copy()
+        
+        return subgraph
