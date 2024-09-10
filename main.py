@@ -60,3 +60,4 @@ point_target = (-6.82186645, 39.301757704855774) # Ferry Terminal, Dar Es Salaam
 graph = Index.load_graph("dar_es_salaam", "walk")
 
 print(type(graph))
+Index.visualize_network(graph)

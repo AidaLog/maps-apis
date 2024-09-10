@@ -1,11 +1,17 @@
 import os
 import osmnx as ox
-from warnings import filterwarnings
+import networkx as nx
+import matplotlib.pyplot as plt
+
 import logging
+from warnings import filterwarnings
+
 import concurrent.futures
 from functools import lru_cache
-from datetime import datetime
+
 import json
+from datetime import datetime
+
 
 
 filterwarnings("ignore")
@@ -325,4 +331,38 @@ class Index:
         graph = ox.load_graphml(filepath=graph_file_path)
         
         return graph
+    
+    
+    @staticmethod
+    def visualize_network(graph,  file_name: str="graph_visualization", output_dir: str="samples"):
+        """
+        Visualize the network graph using networkx and matplotlib.
+
+        Parameters:
+        - graph: The network graph to be visualized (a networkx.Graph or similar object).
+        """
+        if graph is None:
+            raise ValueError("The graph object is None. Please ensure it was loaded successfully.")
+        
+        if isinstance(graph, nx.MultiGraph) or isinstance(graph, nx.Graph):
+            G = graph
+        else:
+            G = ox.utils_graph.get_undirected(graph)
+        
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        file_path = os.path.join(output_dir, file_name)
+        
+        plt.figure(figsize=(12, 12))
+        pos = nx.spring_layout(G, k=0.15, iterations=20)
+        nx.draw(G, pos, with_labels=True, node_size=10, node_color='blue', edge_color='gray', alpha=0.7)
+        plt.title('Network Visualization')
+        
+        plt.savefig(file_path)
+        plt.close()
+        
+        print(f"Graph visualization saved to {file_path}")
+        return file_path
+
 
