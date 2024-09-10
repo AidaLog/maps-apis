@@ -303,4 +303,26 @@ class Index:
             json.dump(metadata, metadata_file, indent=4)
         
         return metadata
+    
+
+    @staticmethod
+    def load_graph(graph_name: str, network_type: str):
+        """
+        Static method to load a graph from local memory from directory <network_type>/graph_name
+        
+        Parameters:
+        - graph_name: The name of the graph file (without extension).
+        - network_type: The type of network (e.g., 'walk', 'drive').
+
+        Returns:
+        - graph: The loaded graph object.
+        """
+        directory = os.path.join("Graph_Network", graph_name, network_type)
+        graph_file_path = os.path.join(directory, f"{graph_name}.graphml")
+        
+        if not os.path.exists(graph_file_path):
+            raise FileNotFoundError(f"The graph file '{graph_file_path}' does not exist.")
+        graph = ox.load_graphml(filepath=graph_file_path)
+        
+        return graph
 

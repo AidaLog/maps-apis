@@ -44,14 +44,19 @@ point_target = (-6.82186645, 39.301757704855774) # Ferry Terminal, Dar Es Salaam
 # print("Distance Matrix: ",matrix) 
 
 
-# bbox coodinates
-north = -6.6900
-south = -7.2000
-east = 39.3000
-west = 39.7000
+# # bbox coodinates
+# north = -6.6900
+# south = -7.2000
+# east = 39.3000
+# west = 39.7000
 
 
-graph = Index().get_graph_from_bbox(north=north, south=south, east=east, west=west, network_type="walk")
+# graph = Index().get_graph_from_bbox(north=north, south=south, east=east, west=west, network_type="walk")
     
-# Save the graph
-Index.save_graph(graph, graph_name="dar_es_salaam", network_type="walk")
+# # Save the graph
+# Index.save_graph(graph, graph_name="dar_es_salaam", network_type="walk")
+
+
+graph = Index.load_graph("dar_es_salaam", "walk")
+
+print(type(graph))
