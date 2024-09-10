@@ -57,7 +57,18 @@ point_target = (-6.82186645, 39.301757704855774) # Ferry Terminal, Dar Es Salaam
 # Index.save_graph(graph, graph_name="dar_es_salaam", network_type="walk")
 
 
-graph = Index.load_graph("dar_es_salaam", "walk")
+# graph = Index.load_graph("dar_es_salaam", "walk")
 
-print(type(graph))
-Index.visualize_network(graph)
+# print(type(graph))
+# Index.visualize_network(graph)
+
+
+start = (6.7924, 39.2083)  # Example coordinates for Dar es Salaam
+end = (6.7930, 39.2090)  # Another example coordinate
+distance, duration = Index.get_route(origin, destination)
+
+if distance is not None and duration is not None:
+    print(f"Distance: {distance} meters")
+    print(f"Duration: {duration} seconds")
+else:
+    print("No route found.")

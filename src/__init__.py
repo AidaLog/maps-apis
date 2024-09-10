@@ -1,8 +1,9 @@
 import os
+import httpx
+import asyncio
 import osmnx as ox
 import networkx as nx
 import matplotlib.pyplot as plt
-
 import logging
 from warnings import filterwarnings
 
@@ -366,3 +367,38 @@ class Index:
         return file_path
 
 
+    @staticmethod
+    def get_route(start_coords, end_coords):
+        """
+        Get route information from OSRM using HTTPX.
+
+        Parameters:
+        - start_coords: Tuple of (latitude, longitude) for the start point.
+        - end_coords: Tuple of (latitude, longitude) for the end point.
+
+        Returns:
+        - distance: The distance of the route in meters.
+        - duration: The estimated travel time in seconds.
+        """
+        osrm_url = (
+            "http://router.project-osrm.org/route/v1/driving/"
+            f"{start_coords[1]},{start_coords[0]};{end_coords[1]},{end_coords[0]}"
+            "?overview=false"
+        )
+
+        async def fetch_route():
+            async with httpx.AsyncClient() as client:
+                response = await client.get(osrm_url)
+                response.raise_for_status()
+                data = response.json()
+                routes = data.get('routes', [])
+                if routes:
+                    distance = routes[0]['distance']  # Distance in meters
+                    duration = routes[0]['duration']  # Duration in seconds
+                    return distance, duration
+                else:
+                    return None, None
+
+        distance, duration = asyncio.run(fetch_route())
+
+        return distance, duration
