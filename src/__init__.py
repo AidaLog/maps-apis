@@ -1,8 +1,18 @@
+import os
 import osmnx as ox
-from warnings import filterwarnings
+import networkx as nx
+import matplotlib.pyplot as plt
+
 import logging
+from warnings import filterwarnings
+
 import concurrent.futures
 from functools import lru_cache
+
+import json
+from datetime import datetime
+
+
 
 filterwarnings("ignore")
 
@@ -256,4 +266,103 @@ class Index:
             total_distance += G[u][v][0]['length']
 
         return total_distance
+    
+    
+    @staticmethod
+    def save_graph(graph, graph_name: str, network_type: str) -> dict:
+        """
+        Static method to save graph to local memory in directory <network_type>/graph_name
+        and create a metadata file.
+
+        Parameters:
+        - graph: The graph to be saved.
+        - graph_name: The name of the graph file (without extension).
+        - network_type: The type of network (e.g., 'walk', 'drive').
+        """
+        if graph is None:
+            raise ValueError("The graph object is None. Please ensure it was created successfully.")
+        
+        # Create directory path
+        directory = os.path.join("Graph_Network", graph_name, network_type)
+        
+        # Ensure the directory exists
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        
+        # Define file paths
+        graph_file_path = os.path.join(directory, f"{graph_name}.graphml")
+        metadata_file_path = os.path.join(directory, f"{graph_name}_metadata.json")
+        
+        # Save the graph
+        ox.save_graphml(graph, filepath=graph_file_path)
+        
+        # Create metadata
+        metadata = {
+            "graph_name": graph_name,
+            "network_type": network_type,
+            "file_path": graph_file_path,
+            "date_created": datetime.now().isoformat()
+        }
+        
+        # Save metadata to JSON
+        with open(metadata_file_path, 'w') as metadata_file:
+            json.dump(metadata, metadata_file, indent=4)
+        
+        return metadata
+    
+
+    @staticmethod
+    def load_graph(graph_name: str, network_type: str):
+        """
+        Static method to load a graph from local memory from directory <network_type>/graph_name
+        
+        Parameters:
+        - graph_name: The name of the graph file (without extension).
+        - network_type: The type of network (e.g., 'walk', 'drive').
+
+        Returns:
+        - graph: The loaded graph object.
+        """
+        directory = os.path.join("Graph_Network", graph_name, network_type)
+        graph_file_path = os.path.join(directory, f"{graph_name}.graphml")
+        
+        if not os.path.exists(graph_file_path):
+            raise FileNotFoundError(f"The graph file '{graph_file_path}' does not exist.")
+        graph = ox.load_graphml(filepath=graph_file_path)
+        
+        return graph
+    
+    
+    @staticmethod
+    def visualize_network(graph,  file_name: str="graph_visualization", output_dir: str="samples"):
+        """
+        Visualize the network graph using networkx and matplotlib.
+
+        Parameters:
+        - graph: The network graph to be visualized (a networkx.Graph or similar object).
+        """
+        if graph is None:
+            raise ValueError("The graph object is None. Please ensure it was loaded successfully.")
+        
+        if isinstance(graph, nx.MultiGraph) or isinstance(graph, nx.Graph):
+            G = graph
+        else:
+            G = ox.utils_graph.get_undirected(graph)
+        
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        file_path = os.path.join(output_dir, file_name)
+        
+        plt.figure(figsize=(12, 12))
+        pos = nx.spring_layout(G, k=0.15, iterations=20)
+        nx.draw(G, pos, with_labels=True, node_size=10, node_color='blue', edge_color='gray', alpha=0.7)
+        plt.title('Network Visualization')
+        
+        plt.savefig(file_path)
+        plt.close()
+        
+        print(f"Graph visualization saved to {file_path}")
+        return file_path
+
 
