@@ -1,8 +1,12 @@
+import os
 import osmnx as ox
 from warnings import filterwarnings
 import logging
 import concurrent.futures
 from functools import lru_cache
+from datetime import datetime
+import json
+
 
 filterwarnings("ignore")
 
@@ -256,4 +260,47 @@ class Index:
             total_distance += G[u][v][0]['length']
 
         return total_distance
+    
+    
+    @staticmethod
+    def save_graph(graph, graph_name: str, network_type: str) -> dict:
+        """
+        Static method to save graph to local memory in directory <network_type>/graph_name
+        and create a metadata file.
+
+        Parameters:
+        - graph: The graph to be saved.
+        - graph_name: The name of the graph file (without extension).
+        - network_type: The type of network (e.g., 'walk', 'drive').
+        """
+        if graph is None:
+            raise ValueError("The graph object is None. Please ensure it was created successfully.")
+        
+        # Create directory path
+        directory = os.path.join("Graph_Network", graph_name, network_type)
+        
+        # Ensure the directory exists
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        
+        # Define file paths
+        graph_file_path = os.path.join(directory, f"{graph_name}.graphml")
+        metadata_file_path = os.path.join(directory, f"{graph_name}_metadata.json")
+        
+        # Save the graph
+        ox.save_graphml(graph, filepath=graph_file_path)
+        
+        # Create metadata
+        metadata = {
+            "graph_name": graph_name,
+            "network_type": network_type,
+            "file_path": graph_file_path,
+            "date_created": datetime.now().isoformat()
+        }
+        
+        # Save metadata to JSON
+        with open(metadata_file_path, 'w') as metadata_file:
+            json.dump(metadata, metadata_file, indent=4)
+        
+        return metadata
 
